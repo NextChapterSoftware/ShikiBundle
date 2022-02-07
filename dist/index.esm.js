@@ -1548,7 +1548,7 @@ let _onigasmPromise = null;
 async function getOnigasm() {
     if (!_onigasmPromise) {
         let loader;
-        if (isBrowser) {
+        if (isBrowser || ONIGASM_WASM) {
             loader = loadWASM(ONIGASM_WASM || _resolvePath('dist/onigasm.wasm'));
         }
         else {
