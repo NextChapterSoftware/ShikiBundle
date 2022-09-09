@@ -1667,7 +1667,7 @@ let _onigurumaPromise = null;
 async function getOniguruma() {
   if (!_onigurumaPromise) {
     let loader;
-    if (isBrowser) {
+    if (isBrowser || WASM) {
       if (typeof WASM === "string") {
         loader = loadWASM({
           data: await fetch(_resolvePath("dist/onig.wasm")).then((r) => r.arrayBuffer())
