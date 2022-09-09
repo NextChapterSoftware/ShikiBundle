@@ -5,6 +5,6 @@ test('Nord highlighter highlights simple JavaScript', async () => {
     theme: 'nord',
     langs: ['js']
   })
-  const out = highlighter.codeToHtml(`console.log('shiki');`, { lang: 'js' })
+  const out = highlighter.codeToHtml(`console.log('shiki');`, 'js')
   expect(out).toMatchSnapshot()
 })

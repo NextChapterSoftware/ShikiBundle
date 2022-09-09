@@ -1,21 +1,21 @@
+import { loadWASM, OnigScanner, OnigString } from 'onigasm'
 import { join, dirpathparts } from './utils'
 import type { IOnigLib, IRawGrammar, IRawTheme } from 'vscode-textmate'
-import { loadWASM, createOnigScanner, createOnigString } from 'vscode-oniguruma'
 import { parse, ParseError } from 'jsonc-parser'
 import type { IShikiTheme } from './types'
 
 export const isWebWorker =
   typeof self !== 'undefined' && typeof self.WorkerGlobalScope !== 'undefined'
-export const isNode =
-  'process' in globalThis &&
-  typeof process !== 'undefined' &&
-  typeof process.release !== 'undefined' &&
-  process.release.name === 'node'
-export const isBrowser = isWebWorker || !isNode
+
+export const isBrowser =
+  isWebWorker ||
+  (typeof window !== 'undefined' &&
+    typeof window.document !== 'undefined' &&
+    typeof fetch !== 'undefined')
 
 // to be replaced by rollup
 let CDN_ROOT = '__CDN_ROOT__'
-let WASM: string | ArrayBuffer = ''
+let ONIGASM_WASM: string | ArrayBuffer = ''
 
 /**
  * Set the route for loading the assets
@@ -32,48 +32,42 @@ export function setCDN(root: string) {
 }
 
 /**
- * Explicitly set the source for loading the oniguruma web assembly module.
+ * Explicitly set the source for loading the OnigasmWASM
  *
  * Accepts Url or ArrayBuffer
  */
-export function setWasm(path: string | ArrayBuffer) {
-  WASM = path
+export function setOnigasmWASM(path: string | ArrayBuffer) {
+  ONIGASM_WASM = path
 }
 
-let _onigurumaPromise: Promise<IOnigLib> = null
+let _onigasmPromise: Promise<IOnigLib> = null
 
-export async function getOniguruma(): Promise<IOnigLib> {
-  if (!_onigurumaPromise) {
-    let loader: Promise<void>
+export async function getOnigasm(): Promise<IOnigLib> {
+  if (!_onigasmPromise) {
+    let loader: Promise<any>
 
-    if (isBrowser) {
-      if (typeof WASM === 'string') {
-        loader = loadWASM({
-          data: await fetch(_resolvePath('dist/onig.wasm')).then(r => r.arrayBuffer())
-        })
-      } else {
-        loader = loadWASM(WASM)
-      }
+    if (isBrowser || ONIGASM_WASM) {
+      loader = loadWASM(ONIGASM_WASM || _resolvePath('dist/onigasm.wasm'))
     } else {
-      const path: typeof import('path') = require('path')
-      const wasmPath = path.join(require.resolve('vscode-oniguruma'), '../onig.wasm')
-      const fs: typeof import('fs') = require('fs')
-      const wasmBin = fs.readFileSync(wasmPath).buffer
+      const path = require('path')
+      const onigasmPath = path.join(require.resolve('onigasm'), '../onigasm.wasm')
+      const fs = require('fs')
+      const wasmBin = fs.readFileSync(onigasmPath).buffer
       loader = loadWASM(wasmBin)
     }
 
-    _onigurumaPromise = loader.then(() => {
+    _onigasmPromise = loader.then(() => {
       return {
         createOnigScanner(patterns: string[]) {
-          return createOnigScanner(patterns)
+          return new OnigScanner(patterns)
         },
         createOnigString(s: string) {
-          return createOnigString(s)
+          return new OnigString(s)
         }
       }
     })
   }
-  return _onigurumaPromise
+  return _onigasmPromise
 }
 
 function _resolvePath(filepath: string) {

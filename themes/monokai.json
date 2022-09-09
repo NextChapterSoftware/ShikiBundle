@@ -102,7 +102,7 @@
       }
     },
     {
-      "scope": ["meta.embedded", "source.groovy.embedded", "string meta.image.inline.markdown"],
+      "scope": ["meta.embedded", "source.groovy.embedded"],
       "settings": {
         "foreground": "#F8F8F2"
       }
@@ -413,12 +413,6 @@
       "scope": "markup.italic.markdown",
       "settings": {
         "fontStyle": "italic"
-      }
-    },
-    {
-      "scope": "markup.strikethrough",
-      "settings": {
-        "fontStyle": "strikethrough"
       }
     },
     {

@@ -7,7 +7,7 @@
       }
     },
     {
-      "scope": ["meta.embedded", "source.groovy.embedded", "string meta.image.inline.markdown"],
+      "scope": ["meta.embedded", "source.groovy.embedded"],
       "settings": {
         "foreground": "#657B83"
       }
@@ -31,7 +31,7 @@
       "name": "Regexp",
       "scope": "string.regexp",
       "settings": {
-        "foreground": "#DC322F"
+        "foreground": "#D30102"
       }
     },
     {
@@ -60,7 +60,7 @@
       "scope": "storage",
       "settings": {
         "fontStyle": "bold",
-        "foreground": "#586E75"
+        "foreground": "#073642"
       }
     },
     {
@@ -72,8 +72,7 @@
         "entity.name.scope-resolution"
       ],
       "settings": {
-        "fontStyle": "",
-        "foreground": "#CB4B16"
+        "foreground": "#268BD2"
       }
     },
     {
@@ -94,7 +93,7 @@
       "name": "Embedded code markers",
       "scope": ["punctuation.section.embedded.begin", "punctuation.section.embedded.end"],
       "settings": {
-        "foreground": "#DC322F"
+        "foreground": "#D30102"
       }
     },
     {
@@ -108,7 +107,7 @@
       "name": "Support.construct",
       "scope": ["support.function.construct", "keyword.other.new"],
       "settings": {
-        "foreground": "#CB4B16"
+        "foreground": "#D30102"
       }
     },
     {
@@ -121,9 +120,7 @@
     {
       "name": "Inherited class",
       "scope": "entity.other.inherited-class",
-      "settings": {
-        "foreground": "#6C71C4"
-      }
+      "settings": {}
     },
     {
       "name": "Function argument",
@@ -139,7 +136,7 @@
     },
     {
       "name": "Tag start/end",
-      "scope": "punctuation.definition.tag",
+      "scope": ["punctuation.definition.tag.begin", "punctuation.definition.tag.end"],
       "settings": {
         "foreground": "#93A1A1"
       }
@@ -162,7 +159,7 @@
       "name": "Continuation",
       "scope": "punctuation.separator.continuation",
       "settings": {
-        "foreground": "#DC322F"
+        "foreground": "#D30102"
       }
     },
     {
@@ -193,7 +190,7 @@
       "name": "Invalid",
       "scope": "invalid",
       "settings": {
-        "foreground": "#DC322F"
+        "foreground": "#cd3131"
       }
     },
     {
@@ -201,7 +198,7 @@
       "scope": ["meta.diff", "meta.diff.header"],
       "settings": {
         "fontStyle": "italic",
-        "foreground": "#268BD2"
+        "foreground": "#268bd2"
       }
     },
     {
@@ -209,7 +206,7 @@
       "scope": "markup.deleted",
       "settings": {
         "fontStyle": "",
-        "foreground": "#DC322F"
+        "foreground": "#dc322f"
       }
     },
     {
@@ -217,14 +214,14 @@
       "scope": "markup.changed",
       "settings": {
         "fontStyle": "",
-        "foreground": "#CB4B16"
+        "foreground": "#cb4b16"
       }
     },
     {
       "name": "diff: inserted",
       "scope": "markup.inserted",
       "settings": {
-        "foreground": "#859900"
+        "foreground": "#219186"
       }
     },
     {
@@ -260,12 +257,6 @@
       "scope": "markup.italic",
       "settings": {
         "fontStyle": "italic"
-      }
-    },
-    {
-      "scope": "markup.strikethrough",
-      "settings": {
-        "fontStyle": "strikethrough"
       }
     },
     {
@@ -312,8 +303,6 @@
     "list.inactiveSelectionBackground": "#D1CBB8",
     "list.highlightForeground": "#B58900",
     "editor.background": "#FDF6E3",
-    "editor.foreground": "#657B83",
-    "notebook.cellEditorBackground": "#F7F0E0",
     "editorWidget.background": "#EEE8D5",
     "editorCursor.foreground": "#657B83",
     "editorWhitespace.foreground": "#586E7580",
@@ -368,15 +357,14 @@
     "terminal.ansiMagenta": "#d33682",
     "terminal.ansiCyan": "#2aa198",
     "terminal.ansiWhite": "#eee8d5",
-    "terminal.ansiBrightBlack": "#002b36",
+    "terminal.ansiBrightBlack": "#586e75",
     "terminal.ansiBrightRed": "#cb4b16",
     "terminal.ansiBrightGreen": "#586e75",
     "terminal.ansiBrightYellow": "#657b83",
     "terminal.ansiBrightBlue": "#839496",
     "terminal.ansiBrightMagenta": "#6c71c4",
     "terminal.ansiBrightCyan": "#93a1a1",
-    "terminal.ansiBrightWhite": "#fdf6e3",
-    "terminal.background": "#FDF6E3",
+    "terminal.ansiBrightWhite": "#eee8d5",
     "walkThrough.embeddedEditorBackground": "#00000014"
   },
   "semanticHighlighting": true

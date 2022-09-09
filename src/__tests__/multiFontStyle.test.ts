@@ -5,6 +5,6 @@ test('Handle multiple font styles', async () => {
     theme: 'material-default',
     langs: ['md']
   })
-  const out = highlighter.codeToHtml(`***bold italic***`, { lang: 'md' })
+  const out = highlighter.codeToHtml(`***bold italic***`, 'md')
   expect(out).toMatchSnapshot()
 })
