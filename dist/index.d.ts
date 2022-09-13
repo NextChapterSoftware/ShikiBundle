@@ -1,6 +1,6 @@
 import { IRawThemeSetting, IRawGrammar, IRawTheme } from 'vscode-textmate';
 
-declare type Theme = 'css-variables' | 'dark-plus' | 'dracula-soft' | 'dracula' | 'github-dark-dimmed' | 'github-dark' | 'github-light' | 'light-plus' | 'material-darker' | 'material-default' | 'material-lighter' | 'material-ocean' | 'material-palenight' | 'min-dark' | 'min-light' | 'monokai' | 'nord' | 'one-dark-pro' | 'poimandres' | 'slack-dark' | 'slack-ochin' | 'solarized-dark' | 'solarized-light' | 'vitesse-dark' | 'vitesse-light';
+declare type Theme = 'css-variables' | 'dark-plus' | 'dracula-soft' | 'dracula' | 'github-dark-dimmed' | 'github-dark' | 'github-light' | 'hc_light' | 'light-plus' | 'material-darker' | 'material-default' | 'material-lighter' | 'material-ocean' | 'material-palenight' | 'min-dark' | 'min-light' | 'monokai' | 'nord' | 'one-dark-pro' | 'poimandres' | 'rose-pine-dawn' | 'rose-pine-moon' | 'rose-pine' | 'slack-dark' | 'slack-ochin' | 'solarized-dark' | 'solarized-light' | 'vitesse-dark' | 'vitesse-light';
 declare const themes: Theme[];
 
 declare enum FontStyle {
@@ -108,7 +108,7 @@ interface HighlighterOptions {
     /**
      * A list of languages to load upfront.
      *
-     * Default to `['html', 'css', 'javascript']`
+     * Default to all the bundled languages.
      */
     langs?: (Lang | ILanguageRegistration)[];
     /**
@@ -120,8 +120,14 @@ interface Highlighter {
     /**
      * Convert code to HTML tokens.
      * `lang` and `theme` must have been loaded.
+     * @deprecated Please use the `codeToHtml(code, options?)` overload instead.
      */
-    codeToHtml(code: string, lang?: StringLiteralUnion<Lang>, theme?: StringLiteralUnion<Theme>): string;
+    codeToHtml(code: string, lang?: StringLiteralUnion<Lang>, theme?: StringLiteralUnion<Theme>, options?: HtmlOptions): string;
+    /**
+     * Convert code to HTML tokens.
+     * `lang` and `theme` must have been loaded.
+     */
+    codeToHtml(code: string, options?: HtmlOptions): string;
     /**
      * Convert code to themed tokens for custom processing.
      * `lang` and `theme` must have been loaded.
@@ -157,6 +163,7 @@ interface Highlighter {
      * Get the background color for theme. Can be used for CSS `background-color`.
      */
     getBackgroundColor(theme?: StringLiteralUnion<Theme>): string;
+    setColorReplacements(map: Record<string, string>): void;
 }
 interface IHighlighterPaths {
     /**
@@ -195,7 +202,7 @@ interface IShikiTheme extends IRawTheme {
     /**
      * @description light/dark theme
      */
-    type: 'light' | 'dark';
+    type: 'light' | 'dark' | 'css';
     /**
      * @description tokenColors of the theme file
      */
@@ -224,6 +231,53 @@ interface IShikiTheme extends IRawTheme {
  * Adapted from https://github.com/microsoft/TypeScript/issues/29729
  */
 declare type StringLiteralUnion<T extends U, U = string> = T | (U & {});
+interface HtmlOptions {
+    lang?: StringLiteralUnion<Lang>;
+    theme?: StringLiteralUnion<Theme>;
+    lineOptions?: LineOption[];
+}
+interface HtmlRendererOptions {
+    langId?: string;
+    fg?: string;
+    bg?: string;
+    lineOptions?: LineOption[];
+    elements?: ElementsOptions;
+}
+interface LineOption {
+    /**
+     * 1-based line number.
+     */
+    line: number;
+    classes?: string[];
+}
+interface ElementProps {
+    children: string;
+    [key: string]: unknown;
+}
+interface PreElementProps extends ElementProps {
+    className: string;
+    style: string;
+}
+interface CodeElementProps extends ElementProps {
+}
+interface LineElementProps extends ElementProps {
+    className: string;
+    lines: IThemedToken[][];
+    line: IThemedToken[];
+    index: number;
+}
+interface TokenElementProps extends ElementProps {
+    style: string;
+    tokens: IThemedToken[];
+    token: IThemedToken;
+    index: number;
+}
+interface ElementsOptions {
+    pre?: (props: PreElementProps) => string;
+    code?: (props: CodeElementProps) => string;
+    line?: (props: LineElementProps) => string;
+    token?: (props: TokenElementProps) => string;
+}
 interface ThemedTokenizerOptions {
     /**
      * Whether to include explanation of each token's matching scopes and
@@ -232,16 +286,11 @@ interface ThemedTokenizerOptions {
     includeExplanation?: boolean;
 }
 
-declare type Lang = 'abap' | 'actionscript-3' | 'ada' | 'apache' | 'apex' | 'apl' | 'applescript' | 'asm' | 'astro' | 'awk' | 'ballerina' | 'bat' | 'batch' | 'c' | 'clojure' | 'clj' | 'cobol' | 'coffee' | 'cpp' | 'crystal' | 'csharp' | 'c#' | 'css' | 'd' | 'dart' | 'diff' | 'docker' | 'dream-maker' | 'elixir' | 'elm' | 'erb' | 'erlang' | 'fish' | 'fsharp' | 'f#' | 'gherkin' | 'git-commit' | 'git-rebase' | 'gnuplot' | 'go' | 'graphql' | 'groovy' | 'hack' | 'haml' | 'handlebars' | 'hbs' | 'haskell' | 'hcl' | 'hlsl' | 'html' | 'ini' | 'java' | 'javascript' | 'js' | 'jinja-html' | 'json' | 'jsonc' | 'jsonnet' | 'jssm' | 'fsl' | 'jsx' | 'julia' | 'jupyter' | 'kotlin' | 'latex' | 'less' | 'lisp' | 'logo' | 'lua' | 'make' | 'makefile' | 'markdown' | 'md' | 'matlab' | 'mdx' | 'nginx' | 'nim' | 'nix' | 'objective-c' | 'objc' | 'objective-cpp' | 'ocaml' | 'pascal' | 'perl' | 'php' | 'plsql' | 'postcss' | 'powershell' | 'ps' | 'ps1' | 'prisma' | 'prolog' | 'pug' | 'jade' | 'puppet' | 'purescript' | 'python' | 'py' | 'r' | 'raku' | 'perl6' | 'razor' | 'riscv' | 'ruby' | 'rb' | 'rust' | 'sas' | 'sass' | 'scala' | 'scheme' | 'scss' | 'shaderlab' | 'shader' | 'shellscript' | 'shell' | 'bash' | 'sh' | 'zsh' | 'smalltalk' | 'solidity' | 'sparql' | 'sql' | 'ssh-config' | 'stylus' | 'styl' | 'svelte' | 'swift' | 'system-verilog' | 'tasl' | 'tcl' | 'tex' | 'toml' | 'tsx' | 'turtle' | 'twig' | 'typescript' | 'ts' | 'vb' | 'cmd' | 'verilog' | 'vhdl' | 'viml' | 'vue-html' | 'vue' | 'wasm' | 'wenyan' | '文言' | 'xml' | 'xsl' | 'yaml';
+declare type Lang = 'abap' | 'actionscript-3' | 'ada' | 'apache' | 'apex' | 'apl' | 'applescript' | 'asm' | 'astro' | 'awk' | 'ballerina' | 'bat' | 'batch' | 'berry' | 'be' | 'bibtex' | 'bicep' | 'blade' | 'c' | 'cadence' | 'cdc' | 'clarity' | 'clojure' | 'clj' | 'cmake' | 'cobol' | 'codeql' | 'ql' | 'coffee' | 'cpp' | 'crystal' | 'csharp' | 'c#' | 'css' | 'cue' | 'd' | 'dart' | 'diff' | 'docker' | 'dream-maker' | 'elixir' | 'elm' | 'erb' | 'erlang' | 'erl' | 'fish' | 'fsharp' | 'f#' | 'gherkin' | 'git-commit' | 'git-rebase' | 'glsl' | 'gnuplot' | 'go' | 'graphql' | 'groovy' | 'hack' | 'haml' | 'handlebars' | 'hbs' | 'haskell' | 'hs' | 'hcl' | 'hlsl' | 'html' | 'ini' | 'java' | 'javascript' | 'js' | 'jinja-html' | 'json' | 'jsonc' | 'jsonnet' | 'jssm' | 'fsl' | 'jsx' | 'julia' | 'kotlin' | 'latex' | 'less' | 'liquid' | 'lisp' | 'logo' | 'lua' | 'make' | 'makefile' | 'markdown' | 'md' | 'marko' | 'matlab' | 'mdx' | 'mermaid' | 'nginx' | 'nim' | 'nix' | 'objective-c' | 'objc' | 'objective-cpp' | 'ocaml' | 'pascal' | 'perl' | 'php' | 'plsql' | 'postcss' | 'powershell' | 'ps' | 'ps1' | 'prisma' | 'prolog' | 'pug' | 'jade' | 'puppet' | 'purescript' | 'python' | 'py' | 'r' | 'raku' | 'perl6' | 'razor' | 'rel' | 'riscv' | 'rst' | 'ruby' | 'rb' | 'rust' | 'rs' | 'sas' | 'sass' | 'scala' | 'scheme' | 'scss' | 'shaderlab' | 'shader' | 'shellscript' | 'shell' | 'bash' | 'sh' | 'zsh' | 'smalltalk' | 'solidity' | 'sparql' | 'sql' | 'ssh-config' | 'stata' | 'stylus' | 'styl' | 'svelte' | 'swift' | 'system-verilog' | 'tasl' | 'tcl' | 'tex' | 'toml' | 'tsx' | 'turtle' | 'twig' | 'typescript' | 'ts' | 'vb' | 'cmd' | 'verilog' | 'vhdl' | 'viml' | 'vim' | 'vimscript' | 'vue-html' | 'vue' | 'wasm' | 'wenyan' | '文言' | 'xml' | 'xsl' | 'yaml' | 'zenscript';
 declare const languages: ILanguageRegistration[];
 
 declare function getHighlighter(options: HighlighterOptions): Promise<Highlighter>;
 
-interface HtmlRendererOptions {
-    langId?: string;
-    fg?: string;
-    bg?: string;
-}
 declare function renderToHtml(lines: IThemedToken[][], options?: HtmlRendererOptions): string;
 
 /**
@@ -256,14 +305,18 @@ declare function renderToHtml(lines: IThemedToken[][], options?: HtmlRendererOpt
  */
 declare function setCDN(root: string): void;
 /**
- * Explicitly set the source for loading the OnigasmWASM
+ * Explicitly set the source for loading the oniguruma web assembly module.
  *
  * Accepts Url or ArrayBuffer
  */
-declare function setOnigasmWASM(path: string | ArrayBuffer): void;
+declare function setWasm(path: string | ArrayBuffer): void;
 /**
  * @param themePath related path to theme.json
  */
 declare function fetchTheme(themePath: string): Promise<IShikiTheme>;
+declare function toShikiTheme(rawTheme: IRawTheme): IShikiTheme;
 
-export { languages as BUNDLED_LANGUAGES, themes as BUNDLED_THEMES, FontStyle, Highlighter, HighlighterOptions, HtmlRendererOptions, ILanguageRegistration, IShikiTheme, IThemeRegistration, IThemedToken, Lang, Theme, getHighlighter, fetchTheme as loadTheme, renderToHtml, setCDN, setOnigasmWASM };
+/** @deprecated use setWasm instead, will be removed in a future version */
+declare function setOnigasmWASM(path: string | ArrayBuffer): void;
+
+export { languages as BUNDLED_LANGUAGES, themes as BUNDLED_THEMES, FontStyle, Highlighter, HighlighterOptions, HtmlRendererOptions, ILanguageRegistration, IShikiTheme, IThemeRegistration, IThemedToken, Lang, Theme, getHighlighter, fetchTheme as loadTheme, renderToHtml, setCDN, setOnigasmWASM, setWasm, toShikiTheme };
